@@ -1,5 +1,6 @@
 package com.kodilla.travelagencyfe.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,12 +9,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class Reservation {
     private Long id;
     private User user;
     private Travel travel;
-    private TravelSky travelSky;
     private TravelType travelType;
     private HotelStandard hotelStandard;
     private MealStandard mealStandard;

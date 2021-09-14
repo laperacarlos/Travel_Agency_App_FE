@@ -13,7 +13,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
-public class TravelForm extends FormLayout {
+public class ReservationForm extends FormLayout {
     private TextField origin = new TextField("Origin");
     private TextField destination = new TextField("Destination");
     private DatePicker departureDate= new DatePicker( "Departure date");
@@ -25,7 +25,7 @@ public class TravelForm extends FormLayout {
     private TravelView travelView;
     private TravelService travelService = TravelService.getInstance();
 
-    public TravelForm(TravelView travelView) {
+    public ReservationForm(TravelView travelView) {
         status.setItems(Status.values());
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

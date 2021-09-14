@@ -1,6 +1,7 @@
 package com.kodilla.travelagencyfe.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -8,20 +9,15 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class User {
     private Long id;
     private String username;
     private String email;
     private LocalDateTime creationDate;
-    private boolean isActive;
-    private boolean isAdministrator;
+    private UserStatus isActive;
+    private UserStatus isAdministrator;
     private List<Reservation> listOfReservations;
 
-    public User(String username, String email, boolean isActive, boolean isAdministrator) {
-        this.username = username;
-        this.email = email;
-        this.isActive = isActive;
-        this.isAdministrator = isAdministrator;
-    }
 }
 

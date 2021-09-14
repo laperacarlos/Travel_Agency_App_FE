@@ -1,59 +1,61 @@
 package com.kodilla.travelagencyfe.views;
 
-import com.kodilla.travelagencyfe.component.TravelForm;
-import com.kodilla.travelagencyfe.domain.TravelService;
+import com.kodilla.travelagencyfe.service.TravelService;
 import com.kodilla.travelagencyfe.domain.Travel;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 
 @Route
 public class MainView extends VerticalLayout {
-
     private TravelService travelService = TravelService.getInstance();
     private Grid<Travel> grid = new Grid<>(Travel.class);
-    private TextField filterByOrigin = new TextField();
-    private TextField filterByDestination = new TextField();
     private Button showTravels = new Button("Travels");
     private Button showUsers = new Button("Users");
     private Button showReservations = new Button("Reservations");
-    private TextField from = new TextField("From:");
-    private TextField to = new TextField("To:");
-    private DatePicker departureDate= new DatePicker( "Departure date");
-    private DatePicker returnDate= new DatePicker("Return date");
-    private Button search = new Button("Search");
+    private TextField fromOrigin = new TextField();
+    private TextField toDestination = new TextField();
+    private Button searchTravels = new Button("Search");
 
     public MainView() {
         grid.setColumns("origin", "destination", "departureDate", "returnDate");
         grid.addComponentColumn(travel-> reservationButton(grid, travel));
-        configFilterByOrigin();
-        configFilterByDestination();
+        grid.addComponentColumn(travel-> checkWeatherButton(grid, travel));
+
+        fromOrigin.setPlaceholder("Search travel by origin");
+        fromOrigin.setClearButtonVisible(true);
+
+        toDestination.setPlaceholder("Search travel by destination");
+        toDestination.setClearButtonVisible(true);
+
+        searchTravels.addClickListener(e -> {
+            searchUpdate();
+        });
 
         showUsers.addClickListener(e -> {
             showUsers.getUI().ifPresent(ui ->
                     ui.navigate("users"));
         });
+
         showReservations.addClickListener(e -> {
             showReservations.getUI().ifPresent(ui ->
                     ui.navigate("reservations"));
         });
 
-        showReservations.addClickListener(e -> {
+        showTravels.addClickListener(e -> {
             showReservations.getUI().ifPresent(ui ->
                     ui.navigate("travels"));
         });
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterByOrigin, filterByDestination, showUsers, showReservations);
+        HorizontalLayout toolbar = new HorizontalLayout(fromOrigin, toDestination, searchTravels);
 
         HorizontalLayout mainContent = new HorizontalLayout(grid);
         mainContent.setSizeFull();
 
-        HorizontalLayout searchTravelSky = new HorizontalLayout(from, to, departureDate, returnDate, search);
+        HorizontalLayout searchTravelSky = new HorizontalLayout(showUsers, showTravels, showReservations);
         searchTravelSky.setSizeFull();
         add(toolbar, mainContent, searchTravelSky);
         setSizeFull();
@@ -61,33 +63,20 @@ public class MainView extends VerticalLayout {
     }
 
     public void refresh() {
-        grid.setItems(travelService.getTravels());
+        grid.setItems(travelService.getOpenTravels());
     }
 
-    private void updateOrigin() {
-        grid.setItems(travelService.findByOrigin(filterByOrigin.getValue()));
-    }
-
-    private void updateDestination() {
-        grid.setItems(travelService.findByDestination(filterByDestination.getValue()));
-    }
-
-    private void configFilterByOrigin() {
-        filterByOrigin.setPlaceholder("Filter by origin");
-        filterByOrigin.setClearButtonVisible(true);
-        filterByOrigin.setValueChangeMode(ValueChangeMode.EAGER);
-        filterByOrigin.addValueChangeListener(e -> updateOrigin());
-    }
-
-    private void configFilterByDestination() {
-        filterByDestination.setPlaceholder("Filter by destination");
-        filterByDestination.setClearButtonVisible(true);
-        filterByDestination.setValueChangeMode(ValueChangeMode.EAGER);
-        filterByDestination.addValueChangeListener(e -> updateDestination());
+    private void searchUpdate() {
+        grid.setItems(travelService.findByOriginAndDestination(fromOrigin.getValue(), toDestination.getValue()));
     }
 
     private Button reservationButton(Grid<Travel> grid, Travel travel){
         Button button = new Button("Reservation");
+        return button;
+    }
+
+    private Button checkWeatherButton(Grid<Travel> grid, Travel travel){
+        Button button = new Button("Check weather in " + travel.getDestination());
         return button;
     }
 
