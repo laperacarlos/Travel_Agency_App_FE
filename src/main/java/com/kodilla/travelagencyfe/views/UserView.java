@@ -11,28 +11,34 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "users")
 public class UserView extends VerticalLayout {
-    private BackendEndpoint backendEndpoint = new BackendEndpoint();
-    private Grid<User> grid = new Grid<>(User.class);
-    private UserForm form = new UserForm(this);
-    private Button addNewUser = new Button("Add new user");
+    private final BackendEndpoint backendEndpoint = new BackendEndpoint();
+    private final Grid<User> grid = new Grid<>(User.class);
+    private final UserForm form = new UserForm(this);
+    private final Button addNewUser = new Button("Add new user");
 
     public UserView() {
-        grid.setColumns("username", "email", "creationDate", "isActive", "isAdministrator");
-        grid.asSingleSelect().addValueChangeListener(e -> form.setUser(grid.asSingleSelect().getValue()));
-        addNewUser.addClickListener(e -> {
-            grid.asSingleSelect().clear();
-            form.setUser(new User());
-        });
-        grid.setSizeFull();
+        setComponents();
         HorizontalLayout mainContent = new HorizontalLayout(grid, form);
         mainContent.setSizeFull();
         add(addNewUser, mainContent);
-        form.setUser(null);
         setSizeFull();
         refresh();
     }
 
     public void refresh() {
         grid.setItems(backendEndpoint.getAllUsers());
+    }
+
+    private void setComponents() {
+        grid.setColumns("username", "email", "creationDate", "isActive", "isAdministrator");
+        grid.asSingleSelect().addValueChangeListener(e -> form.setUser(grid.asSingleSelect().getValue()));
+        grid.setSizeFull();
+
+        addNewUser.addClickListener(e -> {
+            grid.asSingleSelect().clear();
+            form.setUser(new User());
+        });
+
+        form.setUser(null);
     }
 }

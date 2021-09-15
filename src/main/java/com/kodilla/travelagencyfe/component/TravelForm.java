@@ -14,24 +14,29 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
 public class TravelForm extends FormLayout {
-    private TextField origin = new TextField("Origin");
-    private TextField destination = new TextField("Destination");
-    private DatePicker departureDate= new DatePicker( "Departure date");
-    private DatePicker returnDate= new DatePicker("Return date");
-    private ComboBox<Status> status = new ComboBox<>("Status");
-    private Button save = new Button("Save");
-    private Button cancel = new Button("Cancel");
-    private Binder<Travel> binder = new Binder<>(Travel.class);
-    private TravelView travelView;
-    private TravelService travelService = TravelService.getInstance();
+    private final TextField origin = new TextField("Origin");
+    private final TextField destination = new TextField("Destination");
+    private final DatePicker departureDate= new DatePicker( "Departure date");
+    private final DatePicker returnDate= new DatePicker("Return date");
+    private final ComboBox<Status> status = new ComboBox<>("Status");
+    private final Button save = new Button("Save");
+    private final Button cancel = new Button("Cancel");
+    private final Binder<Travel> binder = new Binder<>(Travel.class);
+    private final TravelView travelView;
+    private final TravelService travelService = TravelService.getInstance();
 
     public TravelForm(TravelView travelView) {
-        status.setItems(Status.values());
+        setComponents();
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(origin, destination, departureDate, returnDate, status, buttons);
         binder.bindInstanceFields(this);
         this.travelView = travelView;
+    }
+
+    private void setComponents() {
+        status.setItems(Status.values());
+
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addClickListener(e -> save());
         cancel.addClickListener(e -> cancel());
     }

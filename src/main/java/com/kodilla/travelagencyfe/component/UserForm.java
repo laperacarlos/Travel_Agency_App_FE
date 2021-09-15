@@ -14,24 +14,29 @@ import com.vaadin.flow.data.binder.Binder;
 
 
 public class UserForm extends FormLayout {
-    private TextField username = new TextField("Username");
-    private TextField email = new TextField("E-mail");
-    private ComboBox<UserStatus> isActive = new ComboBox<>("Active");
-    private ComboBox<UserStatus> isAdministrator = new ComboBox<>("Administrator");
-    private Button save = new Button("Save");
-    private Button cancel = new Button("Cancel");
-    private Binder<User> binder = new Binder<>(User.class);
-    private UserView userView;
+    private final TextField username = new TextField("Username");
+    private final TextField email = new TextField("E-mail");
+    private final ComboBox<UserStatus> isActive = new ComboBox<>("Active");
+    private final ComboBox<UserStatus> isAdministrator = new ComboBox<>("Administrator");
+    private final Button save = new Button("Save");
+    private final Button cancel = new Button("Cancel");
+    private final Binder<User> binder = new Binder<>(User.class);
+    private final UserView userView;
     private final BackendEndpoint backendEndpoint = new BackendEndpoint();
 
     public UserForm(UserView userView) {
-        isActive.setItems(UserStatus.values());
-        isAdministrator.setItems(UserStatus.values());
+        setComponents();
         HorizontalLayout buttons = new HorizontalLayout(save, cancel);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         add(username, email, isActive, isAdministrator, buttons);
         binder.bindInstanceFields(this);
         this.userView = userView;
+    }
+
+    private void setComponents() {
+        isActive.setItems(UserStatus.values());
+        isAdministrator.setItems(UserStatus.values());
+
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addClickListener(e -> save());
         cancel.addClickListener(e -> cancel());
     }

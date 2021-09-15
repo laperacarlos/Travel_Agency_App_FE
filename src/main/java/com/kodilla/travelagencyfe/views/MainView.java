@@ -1,5 +1,7 @@
 package com.kodilla.travelagencyfe.views;
 
+import com.kodilla.travelagencyfe.component.ReservationForm;
+import com.kodilla.travelagencyfe.domain.Reservation;
 import com.kodilla.travelagencyfe.service.TravelService;
 import com.kodilla.travelagencyfe.domain.Travel;
 import com.vaadin.flow.component.button.Button;
@@ -11,53 +13,25 @@ import com.vaadin.flow.router.Route;
 
 @Route
 public class MainView extends VerticalLayout {
-    private TravelService travelService = TravelService.getInstance();
-    private Grid<Travel> grid = new Grid<>(Travel.class);
-    private Button showTravels = new Button("Travels");
-    private Button showUsers = new Button("Users");
-    private Button showReservations = new Button("Reservations");
-    private TextField fromOrigin = new TextField();
-    private TextField toDestination = new TextField();
-    private Button searchTravels = new Button("Search");
+    private final TravelService travelService = TravelService.getInstance();
+    private final Grid<Travel> grid = new Grid<>(Travel.class);
+    private final Button showTravels = new Button("Travels");
+    private final Button showUsers = new Button("Users");
+    private final Button showReservations = new Button("Reservations");
+    private final TextField fromOrigin = new TextField();
+    private final TextField toDestination = new TextField();
+    private final Button searchTravels = new Button("Search");
+    private final ReservationForm reservationForm = new ReservationForm(this);
 
     public MainView() {
-        grid.setColumns("origin", "destination", "departureDate", "returnDate");
-        grid.addComponentColumn(travel-> reservationButton(grid, travel));
-        grid.addComponentColumn(travel-> checkWeatherButton(grid, travel));
-
-        fromOrigin.setPlaceholder("Search travel by origin");
-        fromOrigin.setClearButtonVisible(true);
-
-        toDestination.setPlaceholder("Search travel by destination");
-        toDestination.setClearButtonVisible(true);
-
-        searchTravels.addClickListener(e -> {
-            searchUpdate();
-        });
-
-        showUsers.addClickListener(e -> {
-            showUsers.getUI().ifPresent(ui ->
-                    ui.navigate("users"));
-        });
-
-        showReservations.addClickListener(e -> {
-            showReservations.getUI().ifPresent(ui ->
-                    ui.navigate("reservations"));
-        });
-
-        showTravels.addClickListener(e -> {
-            showReservations.getUI().ifPresent(ui ->
-                    ui.navigate("travels"));
-        });
-
-        HorizontalLayout toolbar = new HorizontalLayout(fromOrigin, toDestination, searchTravels);
-
+        setComponents();
+        HorizontalLayout topToolBar = new HorizontalLayout(fromOrigin, toDestination, searchTravels);
         HorizontalLayout mainContent = new HorizontalLayout(grid);
+        HorizontalLayout bottomToolBar = new HorizontalLayout(showUsers, showTravels, showReservations);
         mainContent.setSizeFull();
-
-        HorizontalLayout searchTravelSky = new HorizontalLayout(showUsers, showTravels, showReservations);
-        searchTravelSky.setSizeFull();
-        add(toolbar, mainContent, searchTravelSky);
+        topToolBar.setSizeFull();
+        bottomToolBar.setSizeFull();
+        add(topToolBar, mainContent, bottomToolBar, reservationForm);
         setSizeFull();
         refresh();
     }
@@ -72,6 +46,10 @@ public class MainView extends VerticalLayout {
 
     private Button reservationButton(Grid<Travel> grid, Travel travel){
         Button button = new Button("Reservation");
+        button.addClickListener(event -> {
+            reservationForm.setReservation(new Reservation());
+            reservationForm.setTravelToReservation(travel);
+        });
         return button;
     }
 
@@ -80,4 +58,28 @@ public class MainView extends VerticalLayout {
         return button;
     }
 
+    private void setComponents() {
+        grid.setColumns("origin", "destination", "departureDate", "returnDate");
+        grid.addComponentColumn(travel-> reservationButton(grid, travel));
+        grid.addComponentColumn(travel-> checkWeatherButton(grid, travel));
+
+        fromOrigin.setPlaceholder("Search travel by origin");
+        fromOrigin.setClearButtonVisible(true);
+
+        toDestination.setPlaceholder("Search travel by destination");
+        toDestination.setClearButtonVisible(true);
+
+        searchTravels.addClickListener(e -> searchUpdate());
+
+        showUsers.addClickListener(e -> showUsers.getUI().ifPresent(ui ->
+                ui.navigate("users")));
+
+        showReservations.addClickListener(e -> showReservations.getUI().ifPresent(ui ->
+                ui.navigate("reservations")));
+
+        showTravels.addClickListener(e -> showReservations.getUI().ifPresent(ui ->
+                ui.navigate("travels")));
+
+        reservationForm.setReservation(null);
+    }
 }

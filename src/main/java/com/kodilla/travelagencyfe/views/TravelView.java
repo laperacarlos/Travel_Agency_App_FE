@@ -11,31 +11,34 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "travels")
 public class TravelView extends VerticalLayout {
-    private BackendEndpoint backendEndpoint = new BackendEndpoint();
-    private Grid<Travel> grid = new Grid<>(Travel.class);
-    private TravelForm form = new TravelForm(this);
-    private Button addNewTravel = new Button("Add new travel");
+    private final BackendEndpoint backendEndpoint = new BackendEndpoint();
+    private final Grid<Travel> grid = new Grid<>(Travel.class);
+    private final TravelForm form = new TravelForm(this);
+    private final Button addNewTravel = new Button("Add new travel");
 
     public TravelView() {
+        setComponents();
+        HorizontalLayout mainContent = new HorizontalLayout(grid, form);
+        mainContent.setSizeFull();
+        add(addNewTravel, mainContent);
+        setSizeFull();
+        refresh();
+    }
+
+    public void refresh() {
+        grid.setItems(backendEndpoint.getAllTravels());
+    }
+
+    private void setComponents() {
         grid.setColumns("origin", "destination", "departureDate", "returnDate", "status", "creationDate");
+        grid.asSingleSelect().addValueChangeListener(e -> form.setTravel(grid.asSingleSelect().getValue()));
+        grid.setSizeFull();
 
         addNewTravel.addClickListener(e -> {
             grid.asSingleSelect().clear();
             form.setTravel(new Travel());
         });
 
-        grid.setSizeFull();
-
-        HorizontalLayout mainContent = new HorizontalLayout(grid, form);
-        mainContent.setSizeFull();
-        add(addNewTravel, mainContent);
         form.setTravel(null);
-        setSizeFull();
-        refresh();
-        grid.asSingleSelect().addValueChangeListener(e -> form.setTravel(grid.asSingleSelect().getValue()));
-    }
-
-    public void refresh() {
-        grid.setItems(backendEndpoint.getAllTravels());
     }
 }

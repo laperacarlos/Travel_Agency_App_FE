@@ -77,14 +77,6 @@ public class BackendEndpoint {
         }
     }
 
-    public List<Complaint> getAllComplaints() {
-        return Collections.emptyList();
-    }
-
-    public List<ComplaintAnswer> getAllComplaintAnswers() {
-        return Collections.emptyList();
-    }
-
     public List<Travel> getAllTravels() {
         URI url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/travels").build().encode().toUri();
         return getTravels(url);
@@ -133,7 +125,54 @@ public class BackendEndpoint {
         restTemplate.put(url, request);
     }
 
+    public void createReservation(Reservation reservation) {
+        String jsonContent = createGson().toJson(reservation);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+
+        URI url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/reservations").build().encode().toUri();
+
+        restTemplate.postForObject(url, request, Reservation.class);
+    }
+
+    public void updateReservation(Reservation reservation) {
+        String jsonContent = createGson().toJson(reservation);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>(jsonContent, headers);
+
+        URI url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/reservations").build().encode().toUri();
+
+        restTemplate.put(url, request);
+    }
+
     public List<Reservation> getAllReservations() {
+        URI url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/reservations")
+                .build()
+                .encode()
+                .toUri();
+
+        try {
+            Reservation[] apiResponse = restTemplate.getForObject(url, Reservation[].class);
+            return new ArrayList<>(Optional.ofNullable(apiResponse)
+                    .map(Arrays::asList)
+                    .orElse(Collections.emptyList()));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Complaint> getAllComplaints() {
+        return Collections.emptyList();
+    }
+
+    public List<ComplaintAnswer> getAllComplaintAnswers() {
         return Collections.emptyList();
     }
 }

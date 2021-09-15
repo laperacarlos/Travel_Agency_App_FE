@@ -9,8 +9,8 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "complaints")
 public class ComplaintView extends VerticalLayout {
-    private BackendEndpoint backendEndpoint = new BackendEndpoint();
-    private Grid<Complaint> grid = new Grid<>(Complaint.class);
+    private final BackendEndpoint backendEndpoint = new BackendEndpoint();
+    private final Grid<Complaint> grid = new Grid<>(Complaint.class);
 
     public ComplaintView() {
 

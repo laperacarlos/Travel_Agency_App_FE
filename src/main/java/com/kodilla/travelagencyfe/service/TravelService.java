@@ -40,7 +40,4 @@ public class TravelService {
         travel.setStatus(Status.OPENED);
         backendEndpoint.createTravel(travel);
     }
-
-    public void delete(Travel travel) {
-    }
 }
