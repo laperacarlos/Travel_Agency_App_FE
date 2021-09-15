@@ -168,6 +168,21 @@ public class BackendEndpoint {
         }
     }
 
+    public Weather checkWeather(String city) {
+        URI url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/accuweather/check")
+                .queryParam("city", city)
+                .build()
+                .encode()
+                .toUri();
+        try {
+            Weather apiResponse = restTemplate.getForObject(url, Weather.class);
+            return Optional.ofNullable(apiResponse).orElse(new Weather());
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(), e);
+            return new Weather();
+        }
+    }
+
     public List<Complaint> getAllComplaints() {
         return Collections.emptyList();
     }

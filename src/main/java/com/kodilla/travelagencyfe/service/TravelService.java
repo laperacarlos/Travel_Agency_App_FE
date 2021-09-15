@@ -2,6 +2,7 @@ package com.kodilla.travelagencyfe.service;
 
 import com.kodilla.travelagencyfe.domain.Status;
 import com.kodilla.travelagencyfe.domain.Travel;
+import com.kodilla.travelagencyfe.domain.Weather;
 import com.kodilla.travelagencyfe.endpoint.BackendEndpoint;
 
 import java.util.List;
@@ -39,5 +40,9 @@ public class TravelService {
     public void createTravel(Travel travel) {
         travel.setStatus(Status.OPENED);
         backendEndpoint.createTravel(travel);
+    }
+
+    public Weather checkWeather(String city) {
+        return backendEndpoint.checkWeather(city);
     }
 }

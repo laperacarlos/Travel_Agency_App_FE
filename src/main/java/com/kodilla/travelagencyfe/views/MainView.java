@@ -2,10 +2,14 @@ package com.kodilla.travelagencyfe.views;
 
 import com.kodilla.travelagencyfe.component.ReservationForm;
 import com.kodilla.travelagencyfe.domain.Reservation;
+import com.kodilla.travelagencyfe.domain.Weather;
 import com.kodilla.travelagencyfe.service.TravelService;
 import com.kodilla.travelagencyfe.domain.Travel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.NativeButton;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -22,6 +26,7 @@ public class MainView extends VerticalLayout {
     private final TextField toDestination = new TextField();
     private final Button searchTravels = new Button("Search");
     private final ReservationForm reservationForm = new ReservationForm(this);
+
 
     public MainView() {
         setComponents();
@@ -54,8 +59,18 @@ public class MainView extends VerticalLayout {
     }
 
     private Button checkWeatherButton(Grid<Travel> grid, Travel travel){
-        Button button = new Button("Check weather in " + travel.getDestination());
-        return button;
+        Button checkButton = new Button("Check weather in: " + travel.getDestination());
+        Weather checkedWeather = travelService.checkWeather(travel.getDestination());
+        checkButton.addClickListener(event -> {
+            NativeButton buttonInside = new NativeButton("Have a nice day! :)");
+            Span content = new Span("Actual weather in "+ travel.getDestination() +": " + checkedWeather.getDescription() +
+                    ". Temperature: " + checkedWeather.getTemperature().getMetric() + " C.");
+            Notification notification = new Notification(content, buttonInside);
+            notification.setPosition(Notification.Position.MIDDLE);
+            buttonInside.addClickListener(e -> notification.close());
+            notification.open();
+        });
+        return checkButton;
     }
 
     private void setComponents() {
